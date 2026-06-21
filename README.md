@@ -13,11 +13,11 @@ Is my internet actually slow, or am I just blaming the router again?
 ## What It Does
 
 - Pings `1.1.1.1` every 10 seconds.
-- Shows latency directly in the macOS menu bar.
+- Shows rounded latency directly in the macOS menu bar.
 - Uses one fast ping by default, so the plugin itself does not make your menu bar feel sticky.
 - Keeps packet loss and jitter available when you opt into multiple samples.
 - Uses color to make the network state obvious at a glance.
-- Opens a small dropdown with target, timeout, refresh, detailed ping, speedtest, and network settings.
+- Opens a compact dropdown with status, target, refresh, diagnostics, speedtest, and network settings.
 - Ships with generated PNG icons, so users can install it without building anything.
 
 ```text
@@ -30,7 +30,7 @@ Mac
 Internet
  |
  v
-SwiftBar shows: 80.218ms · GOOD + colored WiFi icon
+SwiftBar shows: 80ms + colored WiFi icon
 ```
 
 Important: Orbity measures network response speed, not download bandwidth.
@@ -53,21 +53,23 @@ So yes, your internet can feel bad even when a speed-test says "big number". The
 The menu bar title looks like this:
 
 ```text
-91.743ms · OK
+82ms
 ```
 
 The dropdown shows:
 
 | Field | Meaning |
 | --- | --- |
-| Quality | Overall state: `GOOD`, `OK`, `SLOW`, or `LOSS` |
-| Latency | Ping response time |
+| Orbity | App name |
+| Status line | `Good`, `OK`, `Slow`, `Packet loss`, or `Unstable` |
+| Target line | Ping target, sample count, and timeout |
 | Packet loss | Only shown when `SWIFTBAR_PING_COUNT` is greater than `1` |
 | Jitter | Only shown when `SWIFTBAR_PING_COUNT` is greater than `1` |
 | Range | Only shown when `SWIFTBAR_PING_COUNT` is greater than `1` |
-| Target | Host being pinged |
-| Samples | Number of ping attempts per refresh |
-| Timeout | Max wait time per ping |
+| Refresh | Rerun the plugin |
+| Diagnostics | Opens a 10-sample ping in Terminal |
+| Speedtest | Opens speedtest if installed, or the install page |
+| Network Settings | Opens macOS Network Settings |
 
 ## Color Rules
 

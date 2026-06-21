@@ -15,6 +15,10 @@ icon_arg() {
   fi
 }
 
+round_ms() {
+  awk "BEGIN { printf \"%.0f\", $1 }"
+}
+
 PING_OUT=$(ping -c "$PING_COUNT" -W "$PING_TIMEOUT_MS" "$PING_TARGET" 2>/dev/null)
 LOSS=$(printf '%s\n' "$PING_OUT" | awk -F',' '/packet loss/{gsub(/[^0-9.]/, "", $3); print $3; exit}')
 STATS=$(printf '%s\n' "$PING_OUT" | awk -F'= ' '/min\/avg\/max|round-trip/{print $2; exit}' | awk '{print $1}')
@@ -26,56 +30,53 @@ JITTER_MS=$(printf '%s' "$STATS" | cut -d/ -f4)
 if [ -z "$AVG_MS" ]; then
   printf 'Offline%s\n' "$(icon_arg gray)"
   echo "---"
-  echo "Status: ping failed"
-  echo "Target: ${PING_TARGET}"
-  echo "Timeout: ${PING_TIMEOUT_MS} ms"
+  echo "Orbity | color=#111111"
+  echo "No response from ${PING_TARGET} | color=#8A8A8A"
+  echo "Timeout ${PING_TIMEOUT_MS}ms | color=#8A8A8A"
+  echo "---"
   echo "Refresh | refresh=true"
-  echo "Detailed ping | bash=ping param1=-c param2=10 param3=${PING_TARGET} terminal=true"
-  echo "Open Network Settings | bash=open param1='x-apple.systempreferences:com.apple.Network-Settings.extension' terminal=false"
+  echo "Diagnostics | bash=ping param1=-c param2=10 param3=${PING_TARGET} terminal=true"
+  echo "Network Settings | bash=open param1='x-apple.systempreferences:com.apple.Network-Settings.extension' terminal=false"
   exit 0
 fi
 
 MI=${AVG_MS%.*}
 LOSS_INT=${LOSS%.*}
+DISPLAY_MS=$(round_ms "$AVG_MS")
 
 if [ "${LOSS_INT:-0}" -ge 50 ]; then
   ICON="red"
-  TAG="LOSS"
+  TAG="Unstable"
 elif [ "${LOSS_INT:-0}" -gt 0 ]; then
   ICON="orange"
-  TAG="LOSS"
+  TAG="Packet loss"
 elif [ "$MI" -lt 80 ]; then
   ICON="green"
-  TAG="GOOD"
+  TAG="Good"
 elif [ "$MI" -lt 150 ]; then
   ICON="orange"
   TAG="OK"
 else
   ICON="red"
-  TAG="SLOW"
+  TAG="Slow"
 fi
 
-printf '%sms · %s%s\n' "$AVG_MS" "$TAG" "$(icon_arg "$ICON")"
+printf '%sms%s\n' "$DISPLAY_MS" "$(icon_arg "$ICON")"
 echo "---"
-echo "Quality: ${TAG}"
-echo "Latency: ${AVG_MS} ms"
+echo "Orbity | color=#111111"
+echo "${TAG} · ${DISPLAY_MS}ms latency | color=#666666"
+echo "Target ${PING_TARGET} · ${PING_COUNT} sample · ${PING_TIMEOUT_MS}ms timeout | color=#8A8A8A"
 if [ "$PING_COUNT" -gt 1 ]; then
-  echo "Packet loss: ${LOSS:-0}%"
-  echo "Jitter: ${JITTER_MS:-0} ms"
-  echo "Range: ${MIN_MS:-?} - ${MAX_MS:-?} ms"
+  echo "---"
+  echo "Loss ${LOSS:-0}% · jitter ${JITTER_MS:-0}ms | color=#8A8A8A"
+  echo "Range ${MIN_MS:-?}-${MAX_MS:-?}ms | color=#8A8A8A"
 fi
 echo "---"
-echo "Target: ${PING_TARGET}"
-echo "Samples: ${PING_COUNT}"
-echo "Timeout: ${PING_TIMEOUT_MS} ms"
-echo "---"
-echo "Meaning: latency is response speed, not download bandwidth"
-echo "Colors: green <80ms, orange 80-150ms/loss, red >150ms/heavy loss"
 echo "Refresh | refresh=true"
-echo "Detailed ping | bash=ping param1=-c param2=10 param3=${PING_TARGET} terminal=true"
+echo "Diagnostics | bash=ping param1=-c param2=10 param3=${PING_TARGET} terminal=true"
 if command -v speedtest >/dev/null 2>&1; then
-  echo "Run speedtest | bash=speedtest terminal=true"
+  echo "Speedtest | bash=speedtest terminal=true"
 else
-  echo "Install speedtest CLI | href=https://www.speedtest.net/apps/cli"
+  echo "Speedtest CLI | href=https://www.speedtest.net/apps/cli"
 fi
-echo "Open Network Settings | bash=open param1='x-apple.systempreferences:com.apple.Network-Settings.extension' terminal=false"
+echo "Network Settings | bash=open param1='x-apple.systempreferences:com.apple.Network-Settings.extension' terminal=false"
