@@ -12,19 +12,20 @@ Is my internet actually slow, or am I just blaming the router again?
 
 ## What It Does
 
-- Pings `1.1.1.1` every 5 seconds.
-- Shows average latency directly in the macOS menu bar.
-- Measures packet loss and jitter from 3 ping samples.
+- Pings `1.1.1.1` every 10 seconds.
+- Shows latency directly in the macOS menu bar.
+- Uses one fast ping by default, so the plugin itself does not make your menu bar feel sticky.
+- Keeps packet loss and jitter available when you opt into multiple samples.
 - Uses color to make the network state obvious at a glance.
-- Opens a dropdown with target, samples, timeout, Wi-Fi device, local IP, and quick actions.
+- Opens a small dropdown with target, timeout, refresh, detailed ping, speedtest, and network settings.
 - Ships with generated PNG icons, so users can install it without building anything.
 
 ```text
-Mac -> 3 ping samples -> avg latency/loss/jitter -> menu bar
+Mac -> 1 fast ping -> latency/status -> menu bar
 
 Mac
  |
- |  ping 1.1.1.1 x 3
+ |  ping 1.1.1.1 x 1
  v
 Internet
  |
@@ -60,15 +61,13 @@ The dropdown shows:
 | Field | Meaning |
 | --- | --- |
 | Quality | Overall state: `GOOD`, `OK`, `SLOW`, or `LOSS` |
-| Average latency | Average ping response time |
-| Packet loss | How many samples failed |
-| Jitter | How much latency jumps around |
-| Range | Min and max latency from the sample |
+| Latency | Ping response time |
+| Packet loss | Only shown when `SWIFTBAR_PING_COUNT` is greater than `1` |
+| Jitter | Only shown when `SWIFTBAR_PING_COUNT` is greater than `1` |
+| Range | Only shown when `SWIFTBAR_PING_COUNT` is greater than `1` |
 | Target | Host being pinged |
 | Samples | Number of ping attempts per refresh |
 | Timeout | Max wait time per ping |
-| Wi-Fi device | macOS network interface, if detected |
-| Local IP | Local IP on the Wi-Fi interface, if detected |
 
 ## Color Rules
 
@@ -100,7 +99,7 @@ cd orbity
 By default, the installer copies files to:
 
 ```text
-~/.swiftbar/latency.5s.sh
+~/.swiftbar/orbity.10s.sh
 ~/.swiftbar/icons/
 ```
 
@@ -115,25 +114,27 @@ SWIFTBAR_PLUGIN_DIR="/path/to/your/swiftbar/plugins" ./install.sh
 Change the ping target:
 
 ```bash
-SWIFTBAR_PING_TARGET=8.8.8.8 ~/.swiftbar/latency.5s.sh
+SWIFTBAR_PING_TARGET=8.8.8.8 ~/.swiftbar/orbity.10s.sh
 ```
 
 Change ping timeout:
 
 ```bash
-SWIFTBAR_PING_TIMEOUT_MS=1000 ~/.swiftbar/latency.5s.sh
+SWIFTBAR_PING_TIMEOUT_MS=600 ~/.swiftbar/orbity.10s.sh
 ```
 
 Change sample count:
 
 ```bash
-SWIFTBAR_PING_COUNT=5 ~/.swiftbar/latency.5s.sh
+SWIFTBAR_PING_COUNT=5 ~/.swiftbar/orbity.10s.sh
 ```
+
+Default is `1`. Keep it there if you want the fastest menu bar. Use `3` or `5` only when you want loss/jitter detail.
 
 Change icon folder:
 
 ```bash
-SWIFTBAR_LATENCY_ICONS="/path/to/icons" ~/.swiftbar/latency.5s.sh
+SWIFTBAR_LATENCY_ICONS="/path/to/icons" ~/.swiftbar/orbity.10s.sh
 ```
 
 ## Regenerate Images
@@ -166,7 +167,7 @@ This plugin is intentionally small:
 - no background service
 - no mystery meat menu bar monster
 
-It checks latency, loss, and jitter, then tells you whether the network is healthy.
+It checks latency quickly, then tells you whether the network is healthy.
 
 ## Future AI-Friendly Improvements
 
@@ -181,6 +182,7 @@ Good next tasks:
 - Add a Homebrew install option.
 - Add tests for parsing ping output.
 - Add optional bandwidth testing through `speedtest` without making it a hard dependency.
+- Add a tiny cache so the title can stay instant even when the network stalls.
 
 Suggested prompt for another AI agent:
 
@@ -193,7 +195,7 @@ Read this repository first. Keep it a small SwiftBar plugin. Improve one thing a
 ```text
 .
 ├── assets/           # Project icon and larger visual assets
-├── latency.5s.sh     # SwiftBar plugin, runs every 5 seconds
+├── orbity.10s.sh     # SwiftBar plugin, runs every 10 seconds
 ├── icons/            # Menu bar PNG icons
 ├── make_icons.py     # Regenerates project icon and status icons
 ├── install.sh        # Copies plugin files to SwiftBar plugin folder

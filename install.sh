@@ -5,9 +5,10 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="${SWIFTBAR_PLUGIN_DIR:-"$HOME/.swiftbar"}"
 
 mkdir -p "$PLUGIN_DIR/icons"
-cp "$ROOT/latency.5s.sh" "$PLUGIN_DIR/latency.5s.sh"
+rm -f "$PLUGIN_DIR/latency.5s.sh"
+cp "$ROOT/orbity.10s.sh" "$PLUGIN_DIR/orbity.10s.sh"
 cp "$ROOT/icons/"*.png "$PLUGIN_DIR/icons/"
-chmod +x "$PLUGIN_DIR/latency.5s.sh"
+chmod +x "$PLUGIN_DIR/orbity.10s.sh"
 
-echo "Installed to: $PLUGIN_DIR/latency.5s.sh"
+echo "Installed to: $PLUGIN_DIR/orbity.10s.sh"
 echo "Refresh SwiftBar or restart it if the plugin does not appear."
