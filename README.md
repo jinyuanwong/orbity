@@ -1,4 +1,4 @@
-# SwiftBar WiFi Latency
+# Orbity
 
 A tiny macOS menu bar plugin for [SwiftBar](https://swiftbar.app/) that shows current network latency with a WiFi-style status icon.
 
@@ -44,8 +44,8 @@ SwiftBar shows: 80.218ms + colored WiFi icon
 2. Clone this repo:
 
 ```bash
-git clone https://github.com/jinyuanwong/swiftbar-wifi-latency.git
-cd swiftbar-wifi-latency
+git clone https://github.com/jinyuanwong/orbity.git
+cd orbity
 ```
 
 3. Install the plugin into your SwiftBar plugin folder:
